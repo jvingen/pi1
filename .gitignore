@@ -80,6 +80,8 @@ fabric.properties
 # Sonarlint plugin
 .idea/sonarlint
 
+.idea/vcs.xml
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
