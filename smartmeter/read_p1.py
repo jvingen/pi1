@@ -9,11 +9,19 @@ from p1data import P1DataStructure
 
 def parse_args():
     parser = argparse.ArgumentParser()
-
+    default_config_file = "smartmeter.config"
     parser.add_argument('-c',
                         '--config',
                         action='store',
-                        default="smartmeter.config"
+                        default=default_config_file,
+                        help="Location of the configuration file. Default: {}".format(default_config_file)
+                        )
+    parser.add_argument('-t',
+                        '--telegrams',
+                        action='store',
+                        default=1,
+                        help="How many telegrams should be read. 0 is unlimited. Default: 1",
+                        type=int
                         )
     return parser.parse_args()
 
@@ -65,6 +73,28 @@ def main():
         msg = "Exception while opening serial connection: {}".format(str(e))
         logger.fatal(msg)
         sys.exit(1)
+
+    # Reading lines from ser:
+    telegram_counter=0
+    while True:
+        try:
+            line = ser.readline().decode(encoding="utf-8").rstrip("\r\n")
+        except KeyboardInterrupt as e:
+            msg = "Interrupted by keyboard: {}".format(str(e))
+            logger.error(msg)
+            sys.exit(1)
+        except Exception as e:
+            msg = "Exception while reading from serial connection: {}".format(str(e))
+            logger.fatal(msg)
+            sys.exit(1)
+        logger.info(line)
+        if line == "!":
+            # End of telegram found!
+            telegram_counter += 1
+            if arguments.telegrams > 0 and arguments.telegrams == telegram_counter:
+                # Break from the loop if a telegram limit is set and the limit is reached:
+                break
+
 
     logger.info("Closing connection...")
     ser.close()
