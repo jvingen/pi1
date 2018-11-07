@@ -2,6 +2,7 @@
 import argparse
 import json
 import logging
+import re
 import sys
 import serial
 from p1data import P1DataStructure
@@ -23,6 +24,11 @@ def parse_args():
                         help="How many telegrams should be read. 0 is unlimited. Default: 1",
                         type=int
                         )
+    parser.add_argument('-v',
+                        '--verbose',
+                        action='store_true',
+                        help="Show more verbose logging (debug). Default: off",
+                        default=False)
     return parser.parse_args()
 
 
@@ -40,10 +46,14 @@ def read_config(json_file):
 
 def main():
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     logging.info("Parsing arguments...")
     arguments = parse_args()
+
+    # Force log level to debug when specified on commandline:
+    if arguments.verbose:
+        logger.setLevel(logging.DEBUG)
     logging.info("Reading config file" + arguments.config)
     config = read_config(arguments.config)
 
@@ -76,6 +86,8 @@ def main():
 
     # Reading lines from ser:
     telegram_counter=0
+    telegram_list = []
+    telegram = []
     while True:
         try:
             line = ser.readline().decode(encoding="utf-8").rstrip("\r\n")
@@ -87,14 +99,29 @@ def main():
             msg = "Exception while reading from serial connection: {}".format(str(e))
             logger.fatal(msg)
             sys.exit(1)
+
+        # Add the line to our telegram, but only if it is not the Null character:
+        if line != "\x00":
+            telegram.append(line)
+
         logger.info(line)
         if line == "!":
             # End of telegram found!
+            # add the compiled telegram to our list:
+            telegram_list.append(telegram[:])
+            # Empty our telegram for reuse:
+            telegram.clear()
+
+            # Increase the overall counter:
             telegram_counter += 1
+
+            # Exit our loop if the desired amount of telegrams has been reached:
             if arguments.telegrams > 0 and arguments.telegrams == telegram_counter:
                 # Break from the loop if a telegram limit is set and the limit is reached:
                 break
 
+    # Dump our telegram_list to the logger:
+    logger.debug(f"Telegram list:\n{telegram_list}")
 
     logger.info("Closing connection...")
     ser.close()
