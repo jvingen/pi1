@@ -112,6 +112,11 @@ def main():
             # End of telegram found!
             # add the compiled telegram to our list:
             telegram_list.append(telegram[:])
+
+            logger.debug(f"Parsed data structure:")
+            for i in datastruct.loadlist(telegram):
+                if i is not None:
+                    logger.debug("%-40.40s | %-20.20s | %s" % i)
             # Empty our telegram for reuse:
             telegram.clear()
 
@@ -126,10 +131,9 @@ def main():
     # Dump our telegram_list to the logger:
     logger.debug(f"Telegram list:\n{telegram_list}")
 
-    logger.debug(f"Parsed data structure:")
-    logger.debug(datastruct.loadlist(telegram_list))
     logger.info("Closing connection...")
     ser.close()
+
 
 if __name__ == '__main__':
     main()
