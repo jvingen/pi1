@@ -15,7 +15,7 @@ def parse_args():
                         '--config',
                         action='store',
                         default=default_config_file,
-                        help="Location of the configuration file. Default: {}".format(default_config_file)
+                        help=f"Location of the configuration file. Default: {default_config_file}"
                         )
     parser.add_argument('-t',
                         '--telegrams',
@@ -88,6 +88,8 @@ def main():
     telegram_counter=0
     telegram_list = []
     telegram = []
+    datastruct = P1DataStructure()
+
     while True:
         try:
             line = ser.readline().decode(encoding="utf-8").rstrip("\r\n")
@@ -103,6 +105,7 @@ def main():
         # Add the line to our telegram, but only if it is not the Null character:
         if line != "\x00":
             telegram.append(line)
+            # logger.debug(f"Data structure parsed: {datastruct.parse_line(line)}")
 
         logger.info(line)
         if line == "!":
@@ -123,6 +126,8 @@ def main():
     # Dump our telegram_list to the logger:
     logger.debug(f"Telegram list:\n{telegram_list}")
 
+    logger.debug(f"Parsed data structure:")
+    logger.debug(datastruct.loadlist(telegram_list))
     logger.info("Closing connection...")
     ser.close()
 

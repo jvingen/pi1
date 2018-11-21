@@ -1,3 +1,6 @@
+import re
+
+
 class P1DataStructure:
     """
     A class representing the P1 data structure
@@ -92,4 +95,41 @@ class P1DataStructure:
         :param telegram_lines: The list containing all the lines
         :return:
         """
+        for line in telegram_lines:
+            yield self.parse_line(line)
+
+    def parse_line(self, line: str):
+        """
+
+        :param line:
+        :return:
+        """
+        # Set empty variables:
+        obis_id = ""
+        obis_value = ""
+
+        matches = re.search(r'(?P<OBIS_ID>[01]-[01]:[0-9.]+)\((?P<OBIS_VALUE>.+)\)$', line)
+
+        if matches:
+            # We've found an OBIS key/value pair, get the id and value
+            obis_id, obis_value = matches.groupdict().values()
+
+            if obis_id in self.OBIS_CODES.keys():
+                # The found OBIS_ID is found in the OBIS_CODES dictionary, lets parse the found value
+                parse_regex = self.OBIS_CODES[obis_id]['value_regex']
+                parse_type = self.OBIS_CODES[obis_id]['type']
+                parse_description = self.OBIS_CODES[obis_id]['description']
+
+                obis_value_match = re.search(parse_regex, obis_value)
+                if obis_value_match:
+                    # Convert to the correct type:
+                    if parse_type == 'float':
+                        return_value = float(obis_value_match.group(0))
+                    elif parse_type == 'int':
+                        return_value  = int(obis_value_match.group(0))
+                    else:
+                        # Use default str:
+                        return_value = obis_value_match.group(0)
+
+                    return return_value, type(return_value), parse_description
 
