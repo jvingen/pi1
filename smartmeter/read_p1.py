@@ -2,10 +2,11 @@
 import argparse
 import json
 import logging
+from pprint import pformat, pprint
 import re
 import sys
 import serial
-from p1data import P1DataStructure
+from p1data import Telegram
 
 
 def parse_args():
@@ -59,7 +60,7 @@ def main():
 
     logger.debug("Config:\n" + str(config))
 
-    p1_data = P1DataStructure()
+    p1_data = Telegram()
 
     # Setup the serial connection:
     ser = serial.Serial()
@@ -88,7 +89,6 @@ def main():
     telegram_counter=0
     telegram_list = []
     telegram = []
-    datastruct = P1DataStructure()
 
     while True:
         try:
@@ -105,18 +105,16 @@ def main():
         # Add the line to our telegram, but only if it is not the Null character:
         if line != "\x00":
             telegram.append(line)
-            # logger.debug(f"Data structure parsed: {datastruct.parse_line(line)}")
+            p1_data.add_line(line)
 
         logger.info(line)
-        if line == "!":
+        if len(line) >= 1 and line[0] == "!":
             # End of telegram found!
             # add the compiled telegram to our list:
             telegram_list.append(telegram[:])
 
-            logger.debug(f"Parsed data structure:")
-            for i in datastruct.loadlist(telegram):
-                if i is not None:
-                    logger.debug("%-40.40s | %-20.20s | %s" % i)
+            logger.debug(f"Content of telegram:\n{pformat(p1_data.telegram, indent=4)}")
+            p1_data.clear()
             # Empty our telegram for reuse:
             telegram.clear()
 
