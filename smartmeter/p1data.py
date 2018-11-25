@@ -1,10 +1,19 @@
 import re
 
 
-class P1DataStructure:
+class Telegram:
     """
     A class representing the P1 data structure
     """
+
+    TELEGRAM_HEADERS = [
+        "/ISk5\\",
+        "KFM5 KFM5KAIFA-METER",
+        "/KFM5",
+        "/KMP5",
+        "/XMX5LG",
+        "/Ene5"
+    ]
 
     OBIS_CODES = {
         "0-0:96.1.1":
@@ -85,18 +94,45 @@ class P1DataStructure:
         """
         Create an empty instance of the P1DataStructure class
         """
-        self._telegram = None
+        # Set the internal variable for storing telegrams to an empty dictionary:
+        self._telegram = {"header": "",
+                          "data": {}
+                          }
 
-    def loadlist(self, telegram_lines: list):
+    def add_line(self, line: str):
         """
-        Load list: Load a list of telegram lines.
-        Each list element should be a str object with the 'raw' line
+        Add the parsed content of the line to the class instance
 
-        :param telegram_lines: The list containing all the lines
+        :param line: The unparsed line
         :return:
         """
-        for line in telegram_lines:
-            yield self.parse_line(line)
+
+        # Identify the type of line:
+        if line == "":
+            # Empty line, we can ignore this one...
+            pass
+
+        # Check if the line is a header line:
+        for headertype in self.TELEGRAM_HEADERS:
+            if line[:len(headertype)] == headertype:
+                # line is a header of type 'headertype'
+                self._telegram['header'] = line
+                pass
+
+        # Check if the line is a OBIS line:
+        parsed_line = self.parse_line(line)
+        if parsed_line is not None:
+            self._telegram['data'].update({parsed_line['obis_id']: parsed_line['obis_value']})
+
+    @property
+    def telegram(self):
+        return self._telegram
+
+    def clear(self):
+        """ Reset the internal variables, acts as a new instance
+        """
+        self._telegram.clear()
+        self.__init__()
 
     def parse_line(self, line: str):
         """
@@ -131,5 +167,10 @@ class P1DataStructure:
                         # Use default str:
                         return_value = obis_value_match.group(0)
 
-                    return return_value, type(return_value), parse_description
-
+                    return {"obis_id": obis_id,
+                            "obis_value": return_value,
+                            "data_type": type(return_value),
+                            "description": parse_description
+                            }
+        else:
+            return None
