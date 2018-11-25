@@ -108,6 +108,8 @@ def main():
             p1_data.add_line(line)
 
         logger.info(line)
+        # check if the first character is an exclamation mark
+        # (some smartmeter append some text after the exclamation mark)
         if len(line) >= 1 and line[0] == "!":
             # End of telegram found!
             # add the compiled telegram to our list:
