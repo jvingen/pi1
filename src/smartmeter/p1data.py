@@ -108,7 +108,7 @@ class Telegram:
         """
 
         # Identify the type of line:
-        if line == "":
+        if len(line) == 0:
             # Empty line, we can ignore this one...
             pass
 
@@ -119,7 +119,7 @@ class Telegram:
                 self._telegram['header'] = line
                 pass
 
-        # Check if the line is a OBIS line:
+        # Check if the line is an OBIS line:
         parsed_line = self.parse_line(line)
         if parsed_line is not None:
             self._telegram['data'].update({parsed_line['obis_id']: parsed_line['obis_value']})
@@ -162,7 +162,7 @@ class Telegram:
                     if parse_type == 'float':
                         return_value = float(obis_value_match.group(0))
                     elif parse_type == 'int':
-                        return_value  = int(obis_value_match.group(0))
+                        return_value = int(obis_value_match.group(0))
                     else:
                         # Use default str:
                         return_value = obis_value_match.group(0)
