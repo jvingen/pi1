@@ -6,7 +6,7 @@ from pprint import pformat, pprint
 import re
 import sys
 import serial
-from p1data import Telegram
+from smartmeter.p1data import Telegram
 
 
 def parse_args():
@@ -86,7 +86,7 @@ def main():
         sys.exit(1)
 
     # Reading lines from ser:
-    telegram_counter=0
+    telegram_counter = 0
     telegram_list = []
     telegram = []
 
