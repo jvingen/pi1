@@ -2,11 +2,10 @@
 import argparse
 import json
 import logging
-from pprint import pformat, pprint
-import re
+from pprint import pformat
 import sys
 import serial
-from smartmeter.p1data import Telegram
+from smartmeter.p1.data import Telegram
 
 
 def parse_args():
