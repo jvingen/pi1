@@ -1,47 +1,10 @@
 #!/usr/bin/env python3
-import argparse
-import json
 import logging
 from pprint import pformat
 import sys
 import serial
 from smartmeter.p1.data import Telegram
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    default_config_file = "smartmeter.config"
-    parser.add_argument('-c',
-                        '--config',
-                        action='store',
-                        default=default_config_file,
-                        help=f"Location of the configuration file. Default: {default_config_file}"
-                        )
-    parser.add_argument('-t',
-                        '--telegrams',
-                        action='store',
-                        default=1,
-                        help="How many telegrams should be read. 0 is unlimited. Default: 1",
-                        type=int
-                        )
-    parser.add_argument('-v',
-                        '--verbose',
-                        action='store_true',
-                        help="Show more verbose logging (debug). Default: off",
-                        default=False)
-    return parser.parse_args()
-
-
-def read_config(json_file):
-
-    config = None
-    try:
-        with open(json_file) as jf:
-            config = json.load(jf)
-    except IOError as e:
-        print("IOException: "+str(e))
-
-    return config
+from smartmeter.p1.read import parse_args, load_config
 
 
 def main():
@@ -55,7 +18,7 @@ def main():
     if arguments.verbose:
         logger.setLevel(logging.DEBUG)
     logging.info("Reading config file" + arguments.config)
-    config = read_config(arguments.config)
+    config = load_config(arguments.config)
 
     logger.debug("Config:\n" + str(config))
 
