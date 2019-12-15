@@ -1,4 +1,5 @@
 import re
+from typing import Union
 
 
 class Telegram:
@@ -92,19 +93,20 @@ class Telegram:
 
     def __init__(self):
         """
-        Create an empty instance of the P1DataStructure class
+        Create an empty instance of the Telegram class
         """
-        # Set the internal variable for storing telegrams to an empty dictionary:
-        self._telegram = {"header": "",
-                          "data": {}
-                          }
+        # Set the internal variable for storing a telegram to an empty dictionary:
+        self._telegram = {
+            "header": "",
+            "data": {}
+         }
 
     def add_line(self, line: str):
         """
         Add the parsed content of the line to the class instance
 
-        :param line: The unparsed line
-        :return:
+        :param line:    The unparsed line
+        :type line:     str
         """
 
         # Identify the type of line:
@@ -129,21 +131,26 @@ class Telegram:
         return self._telegram
 
     def clear(self):
-        """ Reset the internal variables, acts as a new instance
+        """Reset the internal variables, acts as a new instance
         """
         self._telegram.clear()
         self.__init__()
 
-    def parse_line(self, line: str):
-        """
+    def parse_line(self, line: str) -> Union[dict, None]:
+        """Parses a OBIS line into a dictionary
 
-        :param line:
-        :return:
-        """
-        # Set empty variables:
-        obis_id = ""
-        obis_value = ""
+        :param line:    The line to parse
+        :type line:     str
 
+        :return:        If the line is a valid OBIS key/value pair, a dictionary object containing the following fields
+                        are returned:
+                        - obis_id
+                        - obis_value
+                        - data_type
+                        - description
+                        If the line is not a valuid OBIS key/value pair 'None' is returned
+        :rtype:         Union[dict, None]
+        """
         matches = re.search(r'(?P<OBIS_ID>[01]-[01]:[0-9.]+)\((?P<OBIS_VALUE>.+)\)$', line)
 
         if matches:
@@ -167,10 +174,12 @@ class Telegram:
                         # Use default str:
                         return_value = obis_value_match.group(0)
 
-                    return {"obis_id": obis_id,
-                            "obis_value": return_value,
-                            "data_type": type(return_value),
-                            "description": parse_description
-                            }
+                    obis_object = {
+                        "obis_id": obis_id,
+                        "obis_value": return_value,
+                        "data_type": type(return_value),
+                        "description": parse_description
+                    }
+                    return obis_object
         else:
             return None
