@@ -114,7 +114,7 @@ class Telegram:
 
         # Check if the line is a header line:
         for headertype in self.TELEGRAM_HEADERS:
-            if line[:len(headertype)] == headertype:
+            if line.startswith(headertype):
                 # line is a header of type 'headertype'
                 self._telegram['header'] = line
                 pass
