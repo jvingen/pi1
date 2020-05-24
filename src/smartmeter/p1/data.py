@@ -1,5 +1,6 @@
 import re
 from typing import Union
+import time
 
 
 class Telegram:
@@ -98,7 +99,8 @@ class Telegram:
         # Set the internal variable for storing a telegram to an empty dictionary:
         self._telegram = {
             "header": "",
-            "data": {}
+            "data": {},
+            "updatedatetime": float(0)
          }
 
     def add_line(self, line: str):
@@ -108,6 +110,8 @@ class Telegram:
         :param line:    The unparsed line
         :type line:     str
         """
+        # Make sure the parameter 'line' is a str:
+        line = str(line)
 
         # Identify the type of line:
         if len(line) == 0:
@@ -119,16 +123,27 @@ class Telegram:
             if line.startswith(headertype):
                 # line is a header of type 'headertype'
                 self._telegram['header'] = line
+                self.__update_datetime()
                 pass
 
         # Check if the line is an OBIS line:
         parsed_line = self.parse_line(line)
         if parsed_line is not None:
             self._telegram['data'].update({parsed_line['obis_id']: parsed_line['obis_value']})
+            self.__update_datetime()
 
     @property
     def telegram(self):
         return self._telegram
+
+    def has_header(self):
+        if len(self._telegram.get('header', "")) > 0:
+            return True
+        else:
+            return False
+
+    def __update_datetime(self):
+        self._telegram['updatedatetime'] = time.time()
 
     def clear(self):
         """Reset the internal variables, acts as a new instance
