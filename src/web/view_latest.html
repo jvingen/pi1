@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>View latest</title>
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1 align="center">Smartmeter Statistics :: latest</h1>
+<table class="center borders">
+    <tr>
+        <th class="rborder column1">Header:</th>
+        <td><div style="font-family: monospace;" id="sm_header">Loading...</div></td>
+    </tr>
+    <tr>
+        <th class="rborder">Update time:</th>
+        <td><div id="sm_datetime">Loading...</div></td>
+    </tr>
+    <tr>
+        <th class="rborder">Huidige stroomafname:</th>
+        <td class="power_amount"><div id="sm_current_consumption_rate" class="power_amount">Loading...</div><div class="power_units">kWh</div></td>
+    </tr>
+    <tr>
+        <th class="rborder">Huidige stroomteruglevering:</th>
+        <td class="power_amount"><div id="sm_current_production_rate" class="power_amount">Loading...</div><div class="power_units">kWh</div></td>
+    </tr>
+</table>
+<br />
+<table class="center borders">
+    <tr>
+        <th class="rborder column1"></th>
+        <th class="rborder" style="text-align: center;">Normaal</th>
+        <th style="text-align: center;">Dal</th>
+    </tr>
+    <tr>
+        <th class="rborder" style="text-align: left;">Huidig tarief:</th>
+        <td class="rborder" style="text-align: center;"><div id="sm_curr_tarif_norm">Loading...</div></td>
+        <td style="text-align: center;"><div id="sm_curr_tarif_low">Loading...</div></td>
+    </tr>
+    <tr>
+        <th class="rborder" style="text-align: left;">Teller standen stroomafname:</th>
+        <td class="rborder power_amount" style="text-align: right;"><div id="sm_counter_consumption_norm" class="power_amount">Loading...</div><div class="power_units">kW</div></td>
+        <td class="power_amount"><div id="sm_counter_consumption_low" class="power_amount">Loading...</div><div class="power_units"> kW</div></td>
+    </tr>
+    <tr>
+        <th class="rborder" style="text-align: left;">Teller standen stroomteruglevering:</th>
+        <td class="rborder" style="text-align: right;"><div id="sm_counter_production_norm" class="power_amount">Loading...</div><div class="power_units">kW</div></td>
+        <td class="power_amount"><div id="sm_counter_production_low" class="power_amount">Loading...</div><div class="power_units">kW</div></td>
+    </tr>
+</table>
+<br />
+<script type="text/javascript">
+var reloading;
+
+function checkReloading() {
+    if (window.location.hash=="#autoreload") {
+        reloading=setTimeout("window.location.reload();", 5000);
+        document.getElementById("reloadCB").checked=true;
+    }
+}
+
+function toggleAutoRefresh(cb) {
+    if (cb.checked) {
+        window.location.replace("#autoreload");
+        reloading=setTimeout("window.location.reload();", 5000);
+    } else {
+        window.location.replace("#");
+        clearTimeout(reloading);
+    }
+}
+
+window.onload=checkReloading;
+</script>
+<script type="text/javascript">
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var sm_latest = JSON.parse(this.responseText);
+    var sm_data = sm_latest.data;
+    var sm_datetime = new Date(Date.parse(sm_latest.datetime))
+    document.getElementById("sm_header").innerHTML = sm_latest.header;
+    document.getElementById("sm_datetime").innerHTML = sm_datetime.toLocaleString('nl');
+    document.getElementById("sm_current_consumption_rate").innerHTML = sm_data['1-0:1.7.0'];
+    document.getElementById("sm_current_production_rate").innerHTML = sm_data['1-0:2.7.0'];
+
+    var sm_curr_tarif_norm = "";
+    var sm_curr_tarif_low = "";
+    switch (sm_data['0-0:96.14.0']) {
+        case 2:
+            sm_curr_tarif_norm = "X";
+            break;
+        case 1:
+            sm_curr_tarif_low = "X";
+            break;
+        default:
+           sm_curr_tarif_norm = "(Unknown)";
+           sm_curr_tarif_low = "(Unknown)";
+    }
+
+    document.getElementById("sm_curr_tarif_norm").innerHTML = sm_curr_tarif_norm;
+    document.getElementById("sm_curr_tarif_low").innerHTML = sm_curr_tarif_low;
+    document.getElementById("sm_current_consumption_rate").innerHTML = sm_data['1-0:1.7.0'];
+    document.getElementById("sm_current_production_rate").innerHTML = sm_data['1-0:2.7.0'];
+
+    document.getElementById("sm_counter_consumption_norm").innerHTML = sm_data['1-0:1.8.2'];
+    document.getElementById("sm_counter_consumption_low").innerHTML = sm_data['1-0:1.8.1'];
+
+    document.getElementById("sm_counter_production_norm").innerHTML = sm_data['1-0:2.8.2'];
+    document.getElementById("sm_counter_production_low").innerHTML = sm_data['1-0:2.8.1'];
+  }
+};
+xmlhttp.open("GET", "smartmeter_latest.json", true);
+xmlhttp.send();
+</script>
+<p style="text-align: center;">
+ <input type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB" /> Auto Refresh
+    (Last load: <span id="last_load">Loading...</span>)
+</p>
+<script type="text/javascript">
+var last_load = new Date();
+document.getElementById("last_load").innerHTML = last_load.toLocaleString('nl');
+</script>
+</body>
+</html>

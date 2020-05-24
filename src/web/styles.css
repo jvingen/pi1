@@ -1,0 +1,49 @@
+body {
+    font: 12px Verdana, Arial, Helvetica, sans-serif;
+}
+td {
+    padding: 3px;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2
+}
+tr:nth-child(odd) {
+    background: #ffffff
+}
+
+table.center {
+    width: 400px;
+    margin-left:auto;
+    margin-right:auto;
+
+}
+
+.column1 {
+    width: 200px;
+}
+
+
+.borders {
+    border: 1px solid #cccccc;
+}
+
+.rborder {
+    border-right: 1px dotted black;
+    text-align: left;
+}
+
+div {
+    display: inline-block;
+}
+
+.power_amount {
+    text-align: right;
+}
+
+div.power_units {
+    margin-left: 7px;
+    text-align: right;
+    float: right;
+    clear: none;
+}
