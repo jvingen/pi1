@@ -137,13 +137,20 @@ class Telegram:
         return self._telegram
 
     def has_header(self):
-        if len(self._telegram.get('header', "")) > 0:
+        if len(self._telegram.get("header", "")) > 0:
             return True
         else:
             return False
 
-    def __update_datetime(self):
-        self._telegram['updatedatetime'] = time.time()
+    def __update_datetime(self, updatetime: float = None):
+        """Update the updatetime time field in the telegram
+
+        :param updatetime:  A float to overwrite the default value: time.time()
+        :type updatetime:   float
+        
+        """
+        self._telegram['updatedatetime'] = updatetime if updatetime is not None else \
+            time.time()
 
     def clear(self):
         """Reset the internal variables, acts as a new instance
@@ -151,7 +158,8 @@ class Telegram:
         self._telegram.clear()
         self.__init__()
 
-    def parse_line(self, line: str) -> Union[dict, None]:
+    @classmethod
+    def parse_line(cls, line: str) -> Union[dict, None]:
         """Parses a OBIS line into a dictionary
 
         :param line:    The line to parse
@@ -166,17 +174,17 @@ class Telegram:
                         If the line is not a valuid OBIS key/value pair 'None' is returned
         :rtype:         Union[dict, None]
         """
-        matches = re.search(r'(?P<OBIS_ID>[01]-[01]:[0-9.]+)\((?P<OBIS_VALUE>.+)\)$', line)
+        matches = re.search(r'(?P<OBIS_ID>[01]-[01]:[0-9.]+)\((?P<OBIS_VALUE>.*)\)$', line)
 
         if matches:
             # We've found an OBIS key/value pair, get the id and value
             obis_id, obis_value = matches.groupdict().values()
 
-            if obis_id in self.OBIS_CODES.keys():
+            if obis_id in cls.OBIS_CODES.keys():
                 # The found OBIS_ID is found in the OBIS_CODES dictionary, lets parse the found value
-                parse_regex = self.OBIS_CODES[obis_id]['value_regex']
-                parse_type = self.OBIS_CODES[obis_id]['type']
-                parse_description = self.OBIS_CODES[obis_id]['description']
+                parse_regex = cls.OBIS_CODES[obis_id]['value_regex']
+                parse_type = cls.OBIS_CODES[obis_id]['type']
+                parse_description = cls.OBIS_CODES[obis_id]['description']
 
                 obis_value_match = re.search(parse_regex, obis_value)
                 if obis_value_match:
