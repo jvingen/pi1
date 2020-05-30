@@ -108,3 +108,5 @@ tags
 venv/
 /build/
 /dist/
+
+*.egg-info/
