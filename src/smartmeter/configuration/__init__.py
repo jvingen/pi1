@@ -2,7 +2,7 @@ import json
 import serial
 import sys
 
-from smartmeter.lib import get_configured_logger
+from smartmeter.library import get_configured_logger
 
 
 class SerialConfigException(ValueError):
