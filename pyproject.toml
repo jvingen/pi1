@@ -1,0 +1,16 @@
+[project]
+name = "smartmeter"
+version = "0.0.3"
+description = "Smartmeter package for reading and parsing p1 data"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyserial>=3.5",
+]
+
+[project.scripts]
+read_p1 = "smartmeter.cli.read_p1:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
