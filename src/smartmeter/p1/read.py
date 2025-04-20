@@ -1,4 +1,3 @@
-import argparse
 import json
 import logging
 import serial
@@ -26,56 +25,6 @@ def load_config(json_file: str) -> dict:
     return config
 
 
-def parse_args():
-    """Parse all supplied arguments and return an argparse namespace object
-
-    :rtype:             Aargparse.ArgumentParser
-    """
-    parser = argparse.ArgumentParser()
-    default_config_file = "smartmeter.json"
-    default_output_mode = "text"
-    
-    parser.add_argument(
-        "-c",
-        "--config",
-        action="store",
-        default=default_config_file,
-        help=f"Location of the configuration file. Default: {default_config_file}"
-    )
-    
-    parser.add_argument(
-        "-t",
-        "--telegrams",
-        action="store",
-        default=1,
-        help="How many telegrams should be read. 0 is unlimited. Default: 1",
-        type=int
-    )
-    
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        "--debug",
-        action="store_true",
-        help="Show more verbose logging (debug). Default: off",
-        default=False
-    )
-    
-    parser.add_argument(
-        "-o",
-        "--output-mode",
-        action="store",
-        choices=[
-            "json",
-            default_output_mode
-        ],
-        type=str,
-        default=default_output_mode,
-        help=f"Specify the type of output. Defaults to '{default_output_mode}'"
-    )
-    return parser.parse_args()
-
-
 class P1Connection:
     """A class which provides means to get information from a P1 port"""
 
@@ -89,7 +38,7 @@ class P1Connection:
         # Instantiate a new logger instance:
         self.logger = logging.getLogger(__name__)
 
-        self.logger.debug(f"New instance of class P1Connection")
+        self.logger.debug("New instance of class P1Connection")
 
         if serial_config is None:
             self.serial_config = SerialConfig()
@@ -105,7 +54,10 @@ class P1Connection:
 
     def setup_connection(self):
         """Setup a new serial connection, reset old when needed"""
-        if self.serial_connection is not None and not self.serial_connection.closed:
+        if (
+            self.serial_connection is not None
+            and not self.serial_connection.closed
+        ):
             self.serial_connection.close()
 
         self.serial_connection = serial.Serial()
@@ -117,14 +69,3 @@ class P1Connection:
         self.serial_connection.rtscts = self.serial_config.rtscts
         self.serial_connection.timeout = self.serial_config.timeout
         self.serial_connection.port = self.serial_config.port
-
-
-class ReadTelegrams:
-    """A class to provide the means to read data from the P1 port"""
-
-    def __init__(self, configuration: dict):
-        """
-        :param configuration:   A dictionary containing all needed paramters
-        :type configuration:    dict
-        """
-        self.configuration = configuration
