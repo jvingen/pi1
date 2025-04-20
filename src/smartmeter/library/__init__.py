@@ -4,8 +4,7 @@ import sys
 
 
 def get_configured_logger(
-        name: str = None,
-        level: int = None
+    name: str = None, level: int = None
 ) -> logging.Logger:
     """A generic method to create a logger object
 
@@ -37,7 +36,7 @@ def get_configured_logger(
         logging.WARNING,
         logging.INFO,
         logging.DEBUG,
-        logging.NOTSET
+        logging.NOTSET,
     ]
 
     # Validate the log level, reset to WARNING when not valid:
@@ -47,7 +46,9 @@ def get_configured_logger(
 
     handler = logging.StreamHandler(stream=sys.stdout)
 
-    logging_format = "%(asctime)-15s UTC - %(name)s - %(levelname)s - %(message)s"
+    logging_format = (
+        "%(asctime)-15s UTC - %(name)s - %(levelname)s - %(message)s"
+    )
     formatter = logging.Formatter(fmt=logging_format)
     formatter.converter = time.gmtime
 
