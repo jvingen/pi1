@@ -13,5 +13,14 @@ ISKRA_MT382 = SerialConfig(
     xonxoff=False,
     rtscts=False,
     timeout=20,
-    port="/dev/ttyUSB0"
-    )
+    port="/dev/ttyUSB0",
+)
+
+KAIFA_MA304 = SerialConfig(
+    baudrate=115200,
+    bytesize=8,
+    parity="N",
+    stopbits=1,
+    timeout=2,
+    port="/dev/ttyUSB0",
+)
