@@ -1,0 +1,37 @@
+[project]
+name = "smartmeter"
+version = "0.1.0"
+description = "Smartmeter package for reading and parsing p1 data"
+requires-python = ">=3.11"
+dependencies = []
+license = {file = "LICENSE"}
+
+[project.optional-dependencies]
+api = [
+    "smartmeter-api",
+]
+collector = [
+    "smartmeter-collector",
+]
+utility = [
+    "smartmeter-utility",
+]
+full = [
+    "smartmeter-api",
+    "smartmeter-collector",
+    "smartmeter-utility",
+]
+
+#[project.scripts]
+# read_p1 = "smartmeter.cli.read_p1:main"
+
+
+
+[tool.uv.sources]
+smartmeter-lib = { workspace = true }
+smartmeter-api = { workspace = true }
+smartmeter-collector = { workspace = true }
+smartmeter-utility = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/smartmeter-lib", "packages/smartmeter-api", "packages/smartmeter-utility", "packages/smartmeter-collector"]
