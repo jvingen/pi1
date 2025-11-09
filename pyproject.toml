@@ -35,3 +35,4 @@ smartmeter-utility = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/smartmeter-lib", "packages/smartmeter-api", "packages/smartmeter-utility", "packages/smartmeter-collector"]
+
