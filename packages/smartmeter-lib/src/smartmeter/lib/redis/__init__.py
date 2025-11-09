@@ -13,4 +13,7 @@ def connect(
         port = DEFAULT_PORT
     if db is None:
         db = DEFAULT_DB
-    return redis.Redis(host=host, port=port, db=db)
+    pool = redis.ConnectionPool(host=host, port=port, db=db)
+    return redis.Redis(connection_pool=pool)
+
+def
