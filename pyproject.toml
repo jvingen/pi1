@@ -2,8 +2,7 @@
 name = "smartmeter"
 version = "0.1.0"
 description = "Smartmeter package for reading and parsing p1 data"
-requires-python = ">=3.11"
-dependencies = []
+requires-python = ">=3.12"
 license = {file = "LICENSE"}
 
 [project.optional-dependencies]
