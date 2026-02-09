@@ -44,7 +44,7 @@ def configure_logging(
 
     :param log_format_string:
                         A custom log formatter string. Defaults to:
-                        "%(asctime)s [%(name)-45s] %(levelname)-8s - %(message)s"
+                        %(asctime)-15s UTC - %(name)s - %(levelname)s - %(message)s
     :type log_format_string:  str
 
     :param formatter:   The formatter class to use. A custom formatter could be
@@ -69,7 +69,7 @@ def configure_logging(
 
     # Use a sensible date format, and UTC time
     log_format_string = log_format_string if log_format_string is not None else (
-        "%(asctime)s [%(name)-45s] %(levelname)-8s - %(message)s"
+        "%(asctime)-15s UTC - %(name)s - %(levelname)s - %(message)s"
     )
     formatter = formatter if formatter is not None else logging.Formatter
 

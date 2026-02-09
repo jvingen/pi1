@@ -1,4 +1,4 @@
-import redis
+import valkey
 
 from .data import DEFAULT_DB, DEFAULT_HOST, DEFAULT_PORT
 
@@ -14,5 +14,5 @@ def connect(
         port = DEFAULT_PORT
     if db is None:
         db = DEFAULT_DB
-    pool = redis.ConnectionPool(host=host, port=port, db=db)
-    return redis.Redis(connection_pool=pool)
+    pool = valkey.ConnectionPool(host=host, port=port, db=db, protocol=3)
+    return valkey.Valkey(connection_pool=pool)

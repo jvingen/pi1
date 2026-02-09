@@ -119,9 +119,9 @@ class Telegram:
             pass
 
         # Check if the line is a header line:
-        for headertype in self.TELEGRAM_HEADERS:
-            if line.startswith(headertype):
-                # line is a header of type 'headertype'
+        for header_type in self.TELEGRAM_HEADERS:
+            if line.startswith(header_type):
+                # line is a header of type 'header_type'
                 self._telegram['header'] = line
                 self.__update_datetime()
                 pass

@@ -3,10 +3,10 @@ import logging
 from pprint import pformat
 import sys
 
-import smartmeter.configuration.templates
+import smartmeter.collector.templates
 # import smartmeter.p1.config
-from smartmeter.p1.data import Telegram
-from smartmeter.p1.read import parse_args, load_config, P1Connection
+from smartmeter_old.p1.data import Telegram
+from smartmeter_old.p1.read import parse_args, load_config, P1Connection
 
 
 def main():
@@ -38,6 +38,7 @@ def main():
     except Exception as e:
         msg = "Exception while opening serial connection: {}".format(str(e))
         logger.fatal(msg)
+        import sys
         sys.exit(1)
 
     # Reading lines from ser:
